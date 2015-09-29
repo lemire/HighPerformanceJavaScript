@@ -22,6 +22,86 @@ var typedsumup = function(array) {
   return answer;
 }
 
+var typedsumup2 = function(array) {
+  var answer = 0|0;
+  var c = array.length |0;
+  for (var i = 0|0; i < c; i+=2) {
+    answer += array[i]|0;
+    answer += array[i+1]|0;
+
+  }
+  for (; i < c; i++) {
+    answer += array[i]|0;
+  }
+  return answer;
+}
+
+
+var typedsumup4 = function(array) {
+  var answer = 0|0;
+  var c = array.length |0;
+  for (var i = 0|0; i < c; i+=4) {
+    answer += array[i]|0;
+    answer += array[i+1]|0;
+    answer += array[i+2]|0;
+    answer += array[i+3]|0;
+
+  }
+  for (; i < c; i++) {
+    answer += array[i]|0;
+  }
+  return answer;
+}
+
+
+var typedsumup8 = function(array) {
+  var answer = 0|0;
+  var c = array.length |0;
+  for (var i = 0|0; i < c; i+=8) {
+    answer += array[i]|0;
+    answer += array[i+1]|0;
+    answer += array[i+2]|0;
+    answer += array[i+3]|0;
+    answer += array[i+4]|0;
+    answer += array[i+5]|0;
+    answer += array[i+6]|0;
+    answer += array[i+7]|0;
+
+  }
+  for (; i < c; i++) {
+    answer += array[i]|0;
+  }
+  return answer;
+}
+
+var typedsumup16 = function(array) {
+  var answer = 0|0;
+  var c = array.length |0;
+  for (var i = 0|0; i < c; i+=16) {
+    answer += array[i]|0;
+    answer += array[i+1]|0;
+    answer += array[i+2]|0;
+    answer += array[i+3]|0;
+    answer += array[i+4]|0;
+    answer += array[i+5]|0;
+    answer += array[i+6]|0;
+    answer += array[i+7]|0;
+    answer += array[i+8]|0;
+    answer += array[i+9]|0;
+    answer += array[i+10]|0;
+    answer += array[i+11]|0;
+    answer += array[i+12]|0;
+    answer += array[i+13]|0;
+    answer += array[i+14]|0;
+    answer += array[i+15]|0;
+
+  }
+  for (; i < c; i++) {
+    answer += array[i]|0;
+  }
+  return answer;
+}
+
 
 var sumupof = function(array) {
   var answer = 0;
@@ -62,6 +142,10 @@ function Bench() {
 
     // add tests
     var ms = suite.add('sum over Uint32Array (typed)',function() {return typedsumup(a1);} )
+    .add('sum over Uint32Array (typed,unrolled 2)',function() {return typedsumup8(a1);} )
+    .add('sum over Uint32Array (typed,unrolled 4)',function() {return typedsumup8(a1);} )
+    .add('sum over Uint32Array (typed,unrolled 8)',function() {return typedsumup8(a1);} )
+    .add('sum over Uint32Array (typed,unrolled 16)',function() {return typedsumup16(a1);} )
     .add('sum over Uint32Array',function() {return sumup(a1);} )
     .add('reduce over Uint32Array (required recent v8)', function() {return a1.reduce( function(total, num){ return total + num }, 0);})
     .add('sum over Uint32Array using of ',function() {return sumupof(a1);} )
