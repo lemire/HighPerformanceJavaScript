@@ -14,6 +14,71 @@ var bitwiseor = function(a1, a2) {
     }
 };
 
+var justcopy = function(a1) {
+    return new Uint32Array(a1);
+};
+
+var justalloc = function(a1) {
+    return new Uint32Array(a1.length);
+};
+var newbitwiseor1 = function(a1, a2) {
+    if(a1.length != a2.length) throw "lengths do not match";
+    var answer =  new Uint32Array(a1);
+    var cl = a1.length;
+    for(var i = 0; i < cl ; i++) {
+        answer[i] |= a2[i];
+    }
+    return answer;
+};
+var newbitwiseor2 = function(a1, a2) {
+    if(a1.length != a2.length) throw "lengths do not match";
+    var cl = a1.length;
+    var answer = new Uint32Array(cl);
+    for(var i = 0; i < cl ; i++) {
+        answer[i] = a1[i] | a2[i];
+    }
+        return answer;
+};
+var newbitwiseor3 = function(a1, a2) {
+    if(a1.length != a2.length) throw "lengths do not match";
+    var answer = new Uint32Array(a1.length);
+    answer.set(a1);
+    var cl = a1.length;
+    for(var i = 0; i < cl ; i++) {
+        answer[i] |=  a2[i];
+    }
+        return answer;
+};
+
+var newbitwiseor4 = function(a1, a2) {
+    if(a1.length != a2.length) throw "lengths do not match";
+    var answer = new Uint32Array(a1);
+    var cl = a1.length;
+    var i = 0;
+    for(; i + 15  < cl ; i += 16) {
+        answer[i] |= a2[i];
+        answer[i+1] |= a2[i+1];
+        answer[i+2] |= a2[i+2];
+        answer[i+3] |= a2[i+3];
+        answer[i+4] |= a2[i+4];
+        answer[i+5] |= a2[i+5];
+        answer[i+6] |= a2[i+6];
+        answer[i+7] |= a2[i+7];
+        answer[i+8] |= a2[i+8];
+        answer[i+9] |= a2[i+9];
+        answer[i+10] |= a2[i+10];
+        answer[i+11] |= a2[i+11];
+        answer[i+12] |= a2[i+12];
+        answer[i+13] |= a2[i+13];
+        answer[i+14] |= a2[i+14];
+        answer[i+15] |= a2[i+15];
+    }
+    for(; i < cl ; i++) {
+        answer[i] |= a2[i];
+    }
+    return answer;
+};
+
 var bitwiseor2 = function(a1, a2) {
     if(a1.length != a2.length) throw "lengths do not match";
     var cl = a1.length;
@@ -110,9 +175,15 @@ function Bench() {
         b1[i] = i;
         b2[i] = i + 5;
     }
-
     // add tests
-    var ms = suite.add('bitwiseor (Uint32Array)',function(){bitwiseor(a1,a2);})
+    var ms = suite.add('newbitwiseor1 (Uint32Array)',function(){return (newbitwiseor1(a1,a2));})
+    .add('just copy (Uint32Array)',function(){return justcopy(a1);})
+    .add('just alloc (Uint32Array)',function(){return justalloc(a1);})
+    .add('bitwiseor (Uint32Array)',function(){bitwiseor(a1,a2);})
+    .add('newbitwiseor2 (Uint32Array)',function(){return (newbitwiseor2(a1,a2));})
+    .add('newbitwiseor3 (Uint32Array)',function(){return (newbitwiseor3(a1,a2));})
+    .add('newbitwiseor4 (Uint32Array)',function(){return (newbitwiseor4(a1,a2));})
+    .add('bitwiseor (Uint32Array)',function(){bitwiseor(a1,a2);})
     .add('bitwiseor2 (Uint32Array)',function(){bitwiseor2(a1,a2);})
     .add('bitwiseor4 (Uint32Array)',function(){bitwiseor4(a1,a2);})
     .add('bitwiseor8 (Uint32Array)',function(){bitwiseor8(a1,a2);})

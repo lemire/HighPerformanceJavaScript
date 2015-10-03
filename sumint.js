@@ -142,8 +142,8 @@ function Bench() {
 
     // add tests
     var ms = suite.add('sum over Uint32Array (typed)',function() {return typedsumup(a1);} )
-    .add('sum over Uint32Array (typed,unrolled 2)',function() {return typedsumup8(a1);} )
-    .add('sum over Uint32Array (typed,unrolled 4)',function() {return typedsumup8(a1);} )
+    .add('sum over Uint32Array (typed,unrolled 2)',function() {return typedsumup2(a1);} )
+    .add('sum over Uint32Array (typed,unrolled 4)',function() {return typedsumup4(a1);} )
     .add('sum over Uint32Array (typed,unrolled 8)',function() {return typedsumup8(a1);} )
     .add('sum over Uint32Array (typed,unrolled 16)',function() {return typedsumup16(a1);} )
     .add('sum over Uint32Array',function() {return sumup(a1);} )
