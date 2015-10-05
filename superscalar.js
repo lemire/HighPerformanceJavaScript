@@ -163,9 +163,6 @@ function Bench() {
     .add('delta8',function() {
         delta8(a1,diffa1);
     })
-    .add('delta16',function() {
-        delta8(a1,diffa1);
-    })
     .add('prefixsum',function() {
         prefixsum(diffa1,a1);
     })
