@@ -42,8 +42,7 @@ var hammingWeight4 = function(v1,v2,v3,v4) {
   v2 = v2 + (v2 >>> 4) & 0xF0F0F0F;
   v3 = v3 + (v3 >>> 4) & 0xF0F0F0F;
   v4 = v4 + (v4 >>> 4) & 0xF0F0F0F;
-  return (( ( v1 + v2+v3 + v4) * 0x1010101) >>> 24);
-
+  return (( (v1 + v2+v3 + v4) * 0x1010101) >>> 24);
 };
 
 
