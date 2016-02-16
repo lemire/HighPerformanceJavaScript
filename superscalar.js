@@ -19,8 +19,18 @@ var inplaceprefixsum = function(a1) {
     }
 }
 
+var deltaback = function(source, output) {
+    //if(output.length != source.length) throw "lengths do not match";
+    var cl = source.length;
+    if(cl == 0) return;
+    output[0] = source[0];
+    for(var i = cl-1; i!=0 ; i--) {
+        output[i+1] = source[i+1] - source[i];
+    }
+};
+
 var delta = function(source, output) {
-    if(output.length != source.length) throw "lengths do not match";
+    //if(output.length != source.length) throw "lengths do not match";
     var cl = source.length;
     if(cl == 0) return;
     output[0] = source[0];
@@ -30,7 +40,7 @@ var delta = function(source, output) {
 };
 
 var delta2 = function(source, output) {
-    if(output.length != source.length) throw "lengths do not match";
+    //if(output.length != source.length) throw "lengths do not match";
     var cl = source.length;
     if(cl == 0) return;
     output[0] = source[0];
@@ -46,7 +56,7 @@ var delta2 = function(source, output) {
 
 
 var delta4 = function(source, output) {
-    if(output.length != source.length) throw "lengths do not match";
+    //if(output.length != source.length) throw "lengths do not match";
     var cl = source.length;
     if(cl == 0) return;
     output[0] = source[0];
@@ -63,7 +73,7 @@ var delta4 = function(source, output) {
 };
 
 var delta8 = function(source, output) {
-    if(output.length != source.length) throw "lengths do not match";
+    //if(output.length != source.length) throw "lengths do not match";
     var cl = source.length;
     if(cl == 0) return;
     output[0] = source[0];
@@ -84,7 +94,7 @@ var delta8 = function(source, output) {
 };
 
 var prefixsum = function(source, output) {
-    if(output.length != source.length) throw "lengths do not match";
+    //if(output.length != source.length) throw "lengths do not match";
     var cl = source.length;
     if(cl == 0) return;
     output[0] = source[0];
@@ -95,7 +105,7 @@ var prefixsum = function(source, output) {
 
 
 var prefixsum2 = function(source, output) {
-    if(output.length != source.length) throw "lengths do not match";
+    //if(output.length != source.length) throw "lengths do not match";
     var cl = source.length;
     if(cl == 0) return;
     output[0] = source[0];
@@ -108,7 +118,7 @@ var prefixsum2 = function(source, output) {
     }
 };
 var prefixsum4 = function(source, output) {
-    if(output.length != source.length) throw "lengths do not match";
+    //if(output.length != source.length) throw "lengths do not match";
     var cl = source.length;
     if(cl == 0) return;
     output[0] = source[0];
@@ -122,7 +132,7 @@ var prefixsum4 = function(source, output) {
 };
 
 var prefixsum8 = function(source, output) {
-    if(output.length != source.length) throw "lengths do not match";
+    //if(output.length != source.length) throw "lengths do not match";
     var cl = source.length;
     if(cl == 0) return;
     output[0] = source[0];
@@ -151,10 +161,13 @@ function Bench() {
     for(var i = 0; i < length; i++)
         if(a1[i] != i) throw "bug";
     // add tests
-    var ms = suite.add('delta',function() {
+     var ms = suite.add('delta',function() {
         delta(a1,diffa1);
     })
-    .add('delta2',function() {
+    .add('deltaback',function() {
+        deltaback(a1,diffa1);
+    })
+     .add('delta2',function() {
         delta2(a1,diffa1);
     })
     .add('delta4',function() {
