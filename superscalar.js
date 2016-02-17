@@ -12,15 +12,15 @@ function AsmDelta(stdlib, foreign, heap) {
 
   var inplacedelta = function(a1) {
       var cl = a1.length;
-      for(var i = cl - 1; i !=0 ; i--) {
-          a1[i+1] = (a1[i+1] | 0) - (a1[i] | 0);
+      for(var i = cl - 2; i >=0 ; i--) {
+          a1[i+1] = a1[i+1]  - a1[i] ;
       }
   };
 
   var inplaceprefixsum = function(a1) {
       var cl = a1.length;
       for(var i = 0; i + 1 < cl ; i++) {
-          a1[i+1] += (a1[i] | 0);
+          a1[i+1] += a1[i] ;
       }
   }
 
@@ -28,16 +28,29 @@ function AsmDelta(stdlib, foreign, heap) {
 }
 
 var inplacedelta = function(a1) {
-    for(var i = a1.length - 1; i !=0 ; i--) {
+    for(var i = a1.length - 2; i >=0 ; i--) {
         a1[i+1] = a1[i+1] - a1[i];
     }
 };
 
 var inplaceprefixsum = function(a1) {
-    var cl = a1.length;
-    for(var i = 0; i + 1 < cl ; i++) {
+    var cl = a1.length - 1;
+    for(var i = 0; i < cl ; i++) {
         a1[i+1] += a1[i];
     }
+}
+
+
+var inplaceprefixsum8 = function(a1) {
+    var cl = a1.length - 8;
+    var i = 0;
+    for(; i < cl ; i++) {
+        a1[i+8] += (a1[i+7] += (a1[i+6] += (a1[i+5] += (a1[i+4] += (a1[i+3] += (a1[i+2] += (a1[i+1] += a1[i])))))));
+    }
+    for(; i < a1.length - 1 ; i++) {
+        a1[i+1] += a1[i];
+    }
+
 }
 
 var delta = function(source, output) {
@@ -50,6 +63,19 @@ var delta = function(source, output) {
     }
 };
 
+var deltabackalt = function(source, output) {
+  if (source.length == 0) return;
+  output[0] = source[0];
+  for (var i = source.length - 1; i > 0; i--) {
+    output[i] = source[i] - source[i-1];
+  }
+};
+var inplacedeltaalt = function(source) {
+  if (source.length == 0) return;
+  for (var i = source.length - 1; i > 0; i--) {
+    source[i] = source[i] - source[i-1];
+  }
+};
 
 
 var delta2 = function(source, output) {
@@ -215,18 +241,37 @@ function Bench() {
     for(var i = 0; i < length; i++)
         if(a1[i] != i) throw "bug";
     var m = AsmDelta(this, {}, undefined);
-    m.inplacedelta(a1,diffa1);
-    m.inplaceprefixsum(diffa1,a1);
+    inplacedelta(a1);
+    m.inplacedelta(a1);
+    m.inplaceprefixsum(a1);
+    inplaceprefixsum(a1);
+    deltabackalt(a1,diffa1);
 
     // add tests
     var ms = suite.add('delta',function() {
         delta(a1,diffa1);
     })
+    .add('deltabackalt',function() {
+        deltabackalt(a1,diffa1);
+    })
+    .add('inplacedelta',function() {
+         inplacedelta(a1);
+    })
+    .add('inplacedeltaalt',function() {
+        inplacedeltaalt(a1);
+    })
     .add('AsmDelta.inplacedelta',function() {
-         m.inplacedelta(a1,diffa1);
+         m.inplacedelta(a1);
+    })
+    .add('prefixsum',function() {
+        prefixsum(diffa1,a1);
+    })
+
+    .add('inplaceprefixsum',function() {
+        inplaceprefixsum(a1);
     })
     .add('AsmDelta.inplaceprefixsum',function() {
-        m.inplaceprefixsum(diffa1,a1);
+        m.inplaceprefixsum(a1);
     })
     .add('delta2',function() {
         delta2(a1,diffa1);
@@ -249,12 +294,11 @@ function Bench() {
     .add('delta8',function() {
         delta8(a1,diffa1);
     })
-    .add('prefixsum',function() {
-        prefixsum(diffa1,a1);
-    })
-
     .add('prefixsum8',function() {
         prefixsum8(diffa1,a1);
+    })
+    .add('inplaceprefixsum8',function() {
+        inplaceprefixsum8(a1);
     })
     .on('setup', function() {
         for(var i = 0; i < length; i++)
