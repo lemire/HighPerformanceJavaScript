@@ -7,29 +7,32 @@ function logme(x) {
 }
 
 
-function AsmDelta(stdlib, foreign, heap) {
-  'use asm';
-
-  var inplacedelta = function(a1) {
-      var cl = a1.length;
-      for(var i = cl - 2; i >=0 ; i--) {
-          a1[i+1] = a1[i+1]  - a1[i] ;
-      }
-  };
-
-  var inplaceprefixsum = function(a1) {
-      var cl = a1.length;
-      for(var i = 0; i + 1 < cl ; i++) {
-          a1[i+1] += a1[i] ;
-      }
-  }
-
-  return {inplacedelta: inplacedelta, inplaceprefixsum: inplaceprefixsum};
-}
 
 var inplacedelta = function(a1) {
     for(var i = a1.length - 2; i >=0 ; i--) {
         a1[i+1] = a1[i+1] - a1[i];
+    }
+};
+
+
+var inplacedeltaalt2 = function(a1) {
+    var c = a1.length
+    if(c < 2) return
+    var val1 = a1[c - 1]
+    var val2 = a1[c - 2]
+    var diff1 = 0
+    var diff2 = 0
+    var i = c - 1;
+    for(; i >=2 ; i-=2) {
+        val2 = a1[i - 1]
+        diff1 = val1 - val2;
+        val1 = a1[i - 2]
+        diff2 = val2 - val1;
+        a1[i] = diff1
+        a1[i-1] = diff2
+    }
+    if(i === 1) {
+      a1[1] -= a1[0]
     }
 };
 
@@ -40,6 +43,38 @@ var inplaceprefixsum = function(a1) {
     }
 }
 
+
+
+var inplaceprefixsumalt = function(source) {
+    var cl = source.length;
+    if(cl == 0) return;
+    for(var i = 1; i < cl ; i++) {
+        source[i] = source[i - 1] + source[i];
+    }
+};
+
+
+var inplaceprefixsumalt2 = function(source) {
+    var cl = source.length;
+    if(cl == 0) return;
+    var prev = source[0];
+    for(var i = 1; i < cl ; i++) {
+        source[i] = (prev = (source[i] + prev));
+    }
+};
+
+
+var inplaceprefixsumalt3 = function(source) {
+    var cl = source.length;
+    if(cl == 0) return;
+    var prev = source[0];
+    var si = 0;
+    for(var i = 1; i < cl ; i++) {
+        si = source[i]
+        prev = source[i] + prev
+        source[i] = prev;
+    }
+};
 
 var inplaceprefixsum8 = function(a1) {
     var cl = a1.length - 8;
@@ -229,6 +264,7 @@ function Bench() {
     logme("starting benchmark");
     var suite = new Benchmark.Suite();
     var length = 1000;
+    logme("processing array of size "+length);
 
     var a1 = new Uint32Array(length);
     var diffa1 = new Uint32Array(length);
@@ -240,10 +276,7 @@ function Bench() {
     prefixsum2(diffa1,a1);
     for(var i = 0; i < length; i++)
         if(a1[i] != i) throw "bug";
-    var m = AsmDelta(this, {}, undefined);
     inplacedelta(a1);
-    m.inplacedelta(a1);
-    m.inplaceprefixsum(a1);
     inplaceprefixsum(a1);
     deltabackalt(a1,diffa1);
 
@@ -251,8 +284,21 @@ function Bench() {
     var ms = suite.add('delta',function() {
         delta(a1,diffa1);
     })
+    .add('inplacedeltaalt2',function() {
+        inplacedeltaalt2(a1);
+    })
+    .add('inplaceprefixsumalt2',function() {
+        inplaceprefixsumalt2(a1);
+    })
+    .add('inplaceprefixsumalt3',function() {
+        inplaceprefixsumalt3(a1);
+    })
+
     .add('deltabackalt',function() {
         deltabackalt(a1,diffa1);
+    })
+    .add('deltabackalt on self',function() {
+        deltabackalt(a1,a1);
     })
     .add('inplacedelta',function() {
          inplacedelta(a1);
@@ -260,9 +306,7 @@ function Bench() {
     .add('inplacedeltaalt',function() {
         inplacedeltaalt(a1);
     })
-    .add('AsmDelta.inplacedelta',function() {
-         m.inplacedelta(a1);
-    })
+
     .add('prefixsum',function() {
         prefixsum(diffa1,a1);
     })
@@ -270,8 +314,9 @@ function Bench() {
     .add('inplaceprefixsum',function() {
         inplaceprefixsum(a1);
     })
-    .add('AsmDelta.inplaceprefixsum',function() {
-        m.inplaceprefixsum(a1);
+
+    .add('inplaceprefixsumalt',function() {
+        inplaceprefixsumalt(a1);
     })
     .add('delta2',function() {
         delta2(a1,diffa1);
