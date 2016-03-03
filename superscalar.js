@@ -71,7 +71,7 @@ var inplaceprefixsumalt3 = function(source) {
     var si = 0;
     for(var i = 1; i < cl ; i++) {
         si = source[i]
-        prev = source[i] + prev
+        prev = si + prev
         source[i] = prev;
     }
 };
